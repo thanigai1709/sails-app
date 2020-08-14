@@ -21,14 +21,20 @@ module.exports.routes = {
 
   '/': { view: 'pages/homepage' },
 
-  // category End points
+  // Category End points
 
   'GET /api/v1/categories': 'CategoryController.categories',
-  'POST /api/v1/categories': 'CategoryController.create',
   'GET /api/v1/categories/:id': 'CategoryController.getCategoryById',
+  'POST /api/v1/categories': 'CategoryController.create',
+  'PUT /api/v1/categories': 'CategoryController.updateCategory',
   'DELETE /api/v1/categories/:id': 'CategoryController.deleteCategory',
-  'PUT /api/v1/categories': 'CategoryController'
 
+  // Tags End points
+  'GET /api/v1/tags': 'TagController.getallTags',
+  'GET /api/v1/tags/:id': 'TagController.getTagById',
+  'POST /api/v1/tags': 'TagController.createTag',
+  'PUT /api/v1/tags': 'TagController.updateTag',
+  'DELETE /api/v1/tags/:id': 'TagController.deleteTag',
 
   /***************************************************************************
   *                                                                          *

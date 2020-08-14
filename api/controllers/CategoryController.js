@@ -30,7 +30,7 @@ module.exports = {
             }).fetch();
             const featuredImage = req.file('featuredImage');
             const filePath = path.join('uploads', `${Category.tableName}`);
-            const fileName = tmp.name + `-${Category.tableName}-featured-image.jpg`;
+            const fileName = tmp.name.toLowerCase() + `-${Category.tableName}-featured-image.jpg`;
             handleSingleFileUpload(featuredImage, filePath, fileName).then(files => {
                 const protocol = req.connection.encrypted ? 'https' : 'http';
                 const baseUrl = protocol + '://' + req.headers.host + '/';
@@ -94,17 +94,42 @@ module.exports = {
 
     updateCategory: async (req, res) => {
         try {
-            
+            const tmp = await Category.find({ id: req.body.id });
+            if (tmp.length <= 0)
+                return res.send({ message: `category id ${req.body.id} not found` });
+            const updatedRec = await Category.update({ id: req.body.id })
+                .set({
+                    name: req.body.name
+                }).fetch();
+            filePath = path.join(_rootDir + '/assets', url.parse(tmp[0].featuredImage).pathname);
+            fs.unlink(filePath, (err) => {
+                if (err) return res.serverError(err);
+                const featuredImage = req.file('featuredImage');
+                const filePath = path.join('uploads', `${Category.tableName}`);
+                const fileName = updatedRec[0].name.toLowerCase() + `-${Category.tableName}-featured-image.jpg`;
+                handleSingleFileUpload(featuredImage, filePath, fileName).then(files => {
+                    const protocol = req.connection.encrypted ? 'https' : 'http';
+                    const baseUrl = protocol + '://' + req.headers.host + '/';
+                    const filePath = url.resolve(baseUrl, `/uploads/categories/${fileName}`);
+                    updateFilePath(tmp[0].id, filePath)
+                        .then(data => {
+                            res.send(data);
+                        });
+                });
+            });
         } catch (err) {
-
+            if (err && err.code === 'E_UNIQUE')
+                return res.status(409).send({ error: err.code, message: 'Category Already Exists' });
+            else if (err && err.name === 'UsageError')
+                return res.badRequest({ error: err.code, message: 'Invalid Request Format' });
+            else if (err)
+                return res.serverError(err);
         }
     }
 
 };
 
-
-
-
+// helper functions
 function handleSingleFileUpload(uploadFile, filePath, fileName) {
     return new Promise((resolve, reject) => {
         if (fs.existsSync('../../assets/' + filePath))
