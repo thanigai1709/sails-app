@@ -6,13 +6,16 @@
  */
 
 module.exports = {
-  tableName: 'tags',
-
   attributes: {
     name: {
       type: 'string',
       unique: true,
       required: true
+    },
+    products: {
+      collection: 'products',
+      via: 'tag',
+      through: 'producttags'
     }
   },
 

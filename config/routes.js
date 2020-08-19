@@ -36,6 +36,15 @@ module.exports.routes = {
   'PUT /api/v1/tags': 'TagController.updateTag',
   'DELETE /api/v1/tags/:id': 'TagController.deleteTag',
 
+  // Products End Points
+  'GET /api/v1/products': 'ProductsController.getAllProducts',
+  'GET /api/v1/products/:id': 'ProductsController.getProductById',
+  'GET /api/v1/products/search/:slug': 'ProductsController.searchProduct',
+  'POST /api/v1/products': 'ProductsController.createProduct',
+  // Product Tags End points
+  'POST /api/v1/producttags': 'ProducttagsController.attachTags',
+  'DELETE /api/v1/producttags/:id': 'ProducttagsController.removeTags'
+
   /***************************************************************************
   *                                                                          *
   * More custom routes here...                                               *

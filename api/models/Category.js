@@ -7,8 +7,6 @@
 
 module.exports = {
 
-  tableName: 'categories',
-
   attributes: {
 
     name: {
@@ -19,6 +17,10 @@ module.exports = {
     featuredImage: {
       type: 'string',
       required: true
+    },
+    products: {
+      collection: 'products',
+      via: 'category'
     }
   },
 

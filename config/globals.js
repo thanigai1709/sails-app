@@ -49,4 +49,6 @@ module.exports.globals = {
 
   sails: true,
 
+  ROOT_URL: 'http://localhost:1337/'
+
 };
