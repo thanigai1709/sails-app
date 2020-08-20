@@ -41,6 +41,9 @@ module.exports.routes = {
   'GET /api/v1/products/:id': 'ProductsController.getProductById',
   'GET /api/v1/products/search/:slug': 'ProductsController.searchProduct',
   'POST /api/v1/products': 'ProductsController.createProduct',
+  'PUT /api/v1/products': 'ProductsController.updateProduct',
+  'DELETE /api/v1/products/:id': 'ProductsController.deleteProduct',
+
   // Product Tags End points
   'POST /api/v1/producttags': 'ProducttagsController.attachTags',
   'DELETE /api/v1/producttags/:id': 'ProducttagsController.removeTags'

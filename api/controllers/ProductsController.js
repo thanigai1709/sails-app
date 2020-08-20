@@ -10,6 +10,7 @@ const path = require('path');
 const url = require('url');
 const _rootDir = require('app-root-path')
 const baseUrl = sails.config.globals.ROOT_URL;
+const rmDir = require('rimraf');
 module.exports = {
     createProduct: async (req, res) => {
         try {
@@ -20,8 +21,8 @@ module.exports = {
                     stock: req.body.stock,
                     name: req.body.name,
                     price: req.body.price,
-                    featuredImage: 'asdasdasdas',
-                    gallery: 'asdasdas',
+                    featuredImage: 'dummy',
+                    gallery: 'dummy',
                     category: req.body.category_id
                 })
                 .fetch();
@@ -71,6 +72,7 @@ module.exports = {
                 return res.serverError(err);
         }
     },
+
     searchProduct: async (req, res) => {
         try {
             const products = await Products.find({
@@ -84,11 +86,45 @@ module.exports = {
                 return res.serverError(err);
         }
     },
-    updateProduct: async (req, res) => {
-    
-    },
-    deleteProduct: async (req, res) => {
 
+    updateProduct: async (req, res) => {
+        try {
+            res.send(await Products.update({ id: req.body.id })
+                .set({
+                    name: req.body.name,
+                    status: req.body.status,
+                    sku: req.body.sku,
+                    stock: req.body.stock,
+                    price: req.body.price
+                })
+                .fetch());
+        } catch (err) {
+            if (err && err.code === 'E_UNIQUE')
+                return res.status(409).send({ error: err.code, message: `Product SKU ${req.body.sku} Already Exists` });
+            else if (err && err.name === 'UsageError')
+                return res.badRequest({ error: err.code, message: 'Invalid Request Format' });
+            else if (err)
+                return res.serverError(err);
+        }
+    },
+
+    deleteProduct: async (req, res) => {
+        try {
+            const deleteProduct = await Products.find({ id: req.params.id });
+            if (deleteProduct.length <= 0)
+                return res.send({ message: `product id ${req.params.id} not found` });
+            const dir = path.join(_rootDir.toString(), 'assets', 'uploads', `${Products.tableName}`, `${deleteProduct[0].id}`);
+            rmDir(dir, async (err) => {
+                if (err) throw err;
+                await Products.destroyOne({ id: deleteProduct[0].id });
+                res.send({ message: `record deleted sucessfuly`, deleted_record: deleteProduct });
+            });
+        } catch (err) {
+            if (err && err.name === 'UsageError')
+                return res.badRequest({ error: err.code, message: 'Invalid Request Format' });
+            else if (err)
+                return res.serverError(err);
+        }
     }
 
 };

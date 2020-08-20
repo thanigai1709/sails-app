@@ -10,6 +10,7 @@
     "@sailshq/socket.io-redis": "^5.2.0",
     "app-root-path": "^3.0.0",
     "grunt": "1.0.4",
+    "rimraf": "^3.0.2",
     "sails": "^1.2.4",
     "sails-hook-grunt": "^4.0.0",
     "sails-hook-orm": "^2.1.1",

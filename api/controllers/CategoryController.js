@@ -9,7 +9,8 @@
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
-const _rootDir = require('app-root-path')
+const _rootDir = require('app-root-path');
+const baseUrl = sails.config.globals.ROOT_URL;
 
 module.exports = {
 
@@ -32,9 +33,7 @@ module.exports = {
             const filePath = path.join('uploads', `${Category.tableName}`);
             const fileName = tmp.name.toLowerCase() + `-${Category.tableName}-featured-image.jpg`;
             handleSingleFileUpload(featuredImage, filePath, fileName).then(files => {
-                const protocol = req.connection.encrypted ? 'https' : 'http';
-                const baseUrl = protocol + '://' + req.headers.host + '/';
-                const filePath = url.resolve(baseUrl, `/uploads/categories/${fileName}`);
+                const filePath = url.resolve(baseUrl, `/uploads/${Category.tableName}/${fileName}`);
                 updateFilePath(tmp.id, filePath)
                     .then(data => {
                         res.send(data);
