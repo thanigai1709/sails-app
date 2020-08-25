@@ -69,21 +69,26 @@ module.exports = {
         const results = {};
         const sortBy = req.query.sort || 'createdAt DESC';
         const search = req.query.search || '';
-        results.totalcount = await Products.count();
+        results.records_found = await Products.count({
+            where: { name: { contains: search } },
+            where: { sku: { contains: search } },
+        });
+        results.current_page = page;
         if (req.query.search) { results.search_results_for = `showing results for ${search}` }
-        if (endIndex < results.totalcount) { results.next = { page: page + 1, limit: limit } }
+        if (endIndex < results.records_found) { results.next = { page: page + 1, limit: limit } }
         if (startIndex > 0) { results.prev = { page: page - 1, limit: limit } }
         try {
             results.results = await Products.find({
                 where: { name: { contains: search } },
                 where: { sku: { contains: search } },
-                limit: limit,
-                skip: startIndex
             })
+                .limit(limit)
+                .skip(startIndex)
                 .sort(sortBy)
                 .populate('category')
                 .populate('tags');
             results.page_record_count = results.results.length;
+            results.page_count = Math.ceil(results.records_found / limit);
             res.send(results);
         } catch (err) {
             if (err && err.name === 'UsageError')
