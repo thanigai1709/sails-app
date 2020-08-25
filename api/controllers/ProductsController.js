@@ -61,6 +61,38 @@ module.exports = {
         }
     },
 
+    productsFilter: async (req, res) => {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const results = {};
+        const sortBy = req.query.sort || 'createdAt DESC';
+        const search = req.query.search || '';
+        results.totalcount = await Products.count();
+        if (req.query.search) { results.search_results_for = `showing results for ${search}` }
+        if (endIndex < results.totalcount) { results.next = { page: page + 1, limit: limit } }
+        if (startIndex > 0) { results.prev = { page: page - 1, limit: limit } }
+        try {
+            results.results = await Products.find({
+                where: { name: { contains: search } },
+                where: { sku: { contains: search } },
+                limit: limit,
+                skip: startIndex
+            })
+                .sort(sortBy)
+                .populate('category')
+                .populate('tags');
+            results.page_record_count = results.results.length;
+            res.send(results);
+        } catch (err) {
+            if (err && err.name === 'UsageError')
+                return res.badRequest({ error: err.code, message: 'Invalid Request Format' });
+            else if (err)
+                return res.serverError(err);
+        }
+    },
+
     getProductById: async (req, res) => {
         try {
             const products = await Products.find({ id: req.params.id });

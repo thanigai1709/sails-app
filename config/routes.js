@@ -38,6 +38,7 @@ module.exports.routes = {
 
   // Products End Points
   'GET /api/v1/products': 'ProductsController.getAllProducts',
+  'GET /api/v1/products/filter': 'ProductsController.productsFilter',
   'GET /api/v1/products/:id': 'ProductsController.getProductById',
   'GET /api/v1/products/search/:slug': 'ProductsController.searchProduct',
   'POST /api/v1/products': 'ProductsController.createProduct',

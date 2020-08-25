@@ -109,7 +109,7 @@ module.exports = {
                 handleSingleFileUpload(featuredImage, filePath, fileName).then(files => {
                     const protocol = req.connection.encrypted ? 'https' : 'http';
                     const baseUrl = protocol + '://' + req.headers.host + '/';
-                    const filePath = url.resolve(baseUrl, `/uploads/categories/${fileName}`);
+                    const filePath = url.resolve(baseUrl, `/uploads/${Category.tableName}/${fileName}`);
                     updateFilePath(tmp[0].id, filePath)
                         .then(data => {
                             res.send(data);
