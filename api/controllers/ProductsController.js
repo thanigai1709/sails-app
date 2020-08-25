@@ -66,9 +66,9 @@ module.exports = {
         const limit = parseInt(req.query.limit) || 10;
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-        const results = {};
         const sortBy = req.query.sort || 'createdAt DESC';
         const search = req.query.search || '';
+        const results = {};
         results.records_found = await Products.count({
             where: { name: { contains: search } },
             where: { sku: { contains: search } },
